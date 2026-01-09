@@ -1,3 +1,6 @@
+# NOTE: IDs and data operations are placeholders.
+# Persistence and ID generation are handled by StorageManager.
+
 from abc import ABC, abstractmethod
 
 class User(ABC):
@@ -31,7 +34,7 @@ class User(ABC):
             bool: True if authentication succeeds, False otherwise.
         """
         # Actual hashing is handled elsewhere; compare hashes only
-        return self._password_hash == input_password
+        return self._is_active and self._password_hash == input_password
 
     @abstractmethod
     def view_profile(self) -> dict:
