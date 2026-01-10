@@ -1,8 +1,5 @@
 # QA Test Report: Student Progress and Attendance Management System
 
-**Date:** 2026-01-10
-**Tester Role:** Senior QA Engineer
-**Environment:** Linux / Python 3.10+
 
 ## 1. Test Summary
 | Scenario ID | Test Case | Outcome | Notes |
