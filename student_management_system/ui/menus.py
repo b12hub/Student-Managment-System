@@ -7,9 +7,9 @@ def admin_menu() -> str:
         str: Selected action key.
     """
     options = {
-        "1": "User Management",
-        "2": "Course Management",
-        "3": "Reports",
+        "1": "Add User",
+        "2": "Course Management", # Placeholder for now as mainly User/Attendance/Grade focus
+        "3": "System Reports",
         "4": "Logout",
         "5": "Exit"
     }
@@ -23,8 +23,8 @@ def teacher_menu() -> str:
         str: Selected action key.
     """
     options = {
-        "1": "Attendance",
-        "2": "Progress",
+        "1": "Mark Attendance",
+        "2": "Assign Grade",
         "3": "View Students",
         "4": "Logout",
         "5": "Exit"
@@ -39,8 +39,8 @@ def student_menu() -> str:
         str: Selected action key.
     """
     options = {
-        "1": "View Attendance",
-        "2": "View Progress",
+        "1": "Check Attendance",
+        "2": "Check Progress",
         "3": "View Courses",
         "4": "Logout",
         "5": "Exit"
