@@ -35,42 +35,12 @@ class StorageManager:
 
     # Student data
     def load_students(self) -> list:
-        # Assuming students are stored in users.json or a separate students.json
-        # Based on typical requirements, students might be a subset of users or separate.
-        # Given "Student data" section, let's assume a separate structure or filtering logic 
-        # isn't strictly requested to be complex here, but usually students have extra profile data.
-        # Let's use students.json to be safe and separate.
-        file_path = self._get_file_path('students.json')
-        if not os.path.exists(file_path):
-            return []
-        try:
-            with open(file_path, 'r') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            return []
-            
-    def save_students(self, students: list) -> bool:
-        # Added for completeness though not explicitly in "Methods (MUST EXIST)" list 
-        # but logically needed if load_students exists and it's a separate file. 
-        # However, the prompt only asked for load_students. 
-        # I will strictly follow the prompt's MUST EXIST list.
-        # Wait, if I can't save them, how do I persist? 
-        # The prompt says "Student data" -> "load_students(self) -> list".
-        # It misses save_students. 
-        # But "User data" has save_users. Maybe students are just users with role 'student'?
-        # But earlier "Student data" header implies separation.
-        # I will implement save_students just in case, but keep it private or use it if needed.
-        # Actually, looking at the Requirements closely: "Student data: load_students(self) -> list".
-        # It DOES NOT list save_students. 
-        # It's possible students are saved via save_users if they are users.
-        # OR it's a read-only view here? 
-        # "Implements all load/save logic used by ... reporting algorithms".
-        # Let's stick to the list. If it's not there, maybe I shouldn't add it publicly.
-        # But I'll need it for the system to work if students are separate.
-        # Pivot: implementation details -> maybe students.json is needed. 
-        # I'll implement save_students as a helper or just add it if strictly needed.
-        # For now, I will NOT add save_students to the public API to STRICTLY follow "Methods (MUST EXIST)".
-        pass
+        users = self.load_users()
+        students = []
+        for user in users:
+            if user.get('_role') == 'Student':
+                students.append(user)
+        return students
 
     # Attendance data (CSV-based)
     def load_attendance(self) -> list:
@@ -90,10 +60,9 @@ class StorageManager:
     def save_attendance(self, attendance_records: list) -> bool:
         file_path = self._get_file_path('attendance.csv')
         if not attendance_records:
-            return True # Nothing to save, successfully verified
+            return True
             
         try:
-            # Get fieldnames from the first record
             fieldnames = attendance_records[0].keys()
             with open(file_path, 'w', newline='') as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -140,8 +109,7 @@ class StorageManager:
         
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         try:
-            files_to_backup = ['users.json', 'students.json', 'attendance.csv', 'grades.csv']
-            # Only backup files that exist
+            files_to_backup = ['users.json', 'attendance.csv', 'grades.csv']
             files_found = False
             for filename in files_to_backup:
                 src = self._get_file_path(filename)
@@ -154,7 +122,6 @@ class StorageManager:
             return False
 
     def validate_data_integrity(self) -> bool:
-        # Check if critical files are valid JSON/CSV
         # users.json
         users_valid = True
         u_path = self._get_file_path('users.json')
@@ -171,8 +138,10 @@ class StorageManager:
         if os.path.exists(a_path):
             try:
                 with open(a_path, 'r') as f:
-                    csv.DictReader(f)
-            except csv.Error:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pass
+            except (csv.Error, ValueError):
                 att_valid = False
                 
         # grades.csv
@@ -181,8 +150,10 @@ class StorageManager:
         if os.path.exists(g_path):
             try:
                 with open(g_path, 'r') as f:
-                    csv.DictReader(f)
-            except csv.Error:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pass
+            except (csv.Error, ValueError):
                 grades_valid = False
 
         return users_valid and att_valid and grades_valid
