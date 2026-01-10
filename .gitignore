@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+*.log
+reports/
+student_management_system/reports/
+student_management_system/logs/
+.idea/
+.vscode/
