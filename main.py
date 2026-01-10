@@ -1,13 +1,13 @@
 import sys
-from storage.storage_manager import StorageManager
-from ui import prompts, menus
-from models.user import Admin, Teacher, Student
-from models.attendance import Attendance
-from models.grade import Grade
+from student_management_system.storage.storage_manager import StorageManager
+from student_management_system.ui import prompts, menus
+from student_management_system.models.user import Admin, Teacher, Student
+from student_management_system.models.attendance import Attendance
+from student_management_system.models.grade import Grade
 from student_management_system import utils
 
 # Configuration
-DATA_DIR = "data"
+DATA_DIR = "student_management_system/data"
 
 def create_user_from_dict(data: dict):
     """Helper to instantiate appropriate User subclass from dict data."""
