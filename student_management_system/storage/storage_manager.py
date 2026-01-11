@@ -126,6 +126,14 @@ class StorageManager:
         users_valid = True
         u_path = self._get_file_path('users.json')
         if os.path.exists(u_path):
+            # SAFE FIX: If file is empty (0 bytes), initialize it
+            if os.path.getsize(u_path) == 0:
+                try:
+                    with open(u_path, 'w') as f:
+                         json.dump([], f)
+                except IOError:
+                     users_valid = False
+
             try:
                 with open(u_path, 'r') as f:
                     json.load(f)
