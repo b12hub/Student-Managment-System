@@ -86,6 +86,17 @@ class Admin(User):
         # Logic to add user would go here
         return True
 
+    def add_group(self , group_data: dict) -> bool:
+        """
+        Add a new group to the system.
+
+        Args:
+            group_data (dict): Dictionary containing new group information.
+
+        Returns:
+            bool: True if successful.
+        """
+
     def remove_user(self, user_id: str) -> bool:
         """
         Remove a user from the system.
@@ -97,6 +108,44 @@ class Admin(User):
             bool: True if successful.
         """
         return True
+
+    def remove_group(self , group_id: str) -> bool:
+        """
+        Remove a group from the system.
+
+        Args:
+            group_id (str): The ID of the group to remove.
+
+        Returns:
+             bool: True if successful.
+        """
+
+    def update_user(self, user_data: dict) -> bool:
+        """
+        Update user information.
+
+        Args:
+            user_data (dict): Dictionary containing user information.
+
+        Returns:
+            bool: True if successful.
+
+
+        """
+
+
+    def update_group(self , group_data: dict) -> bool:
+        """
+        Update group information.
+
+        Args:
+            group_data (dict): Dictionary containing group information.
+
+        Returns:
+            bool : True if successful.
+        :param group_data:
+        :return:
+        """
 
     def manage_course(self, course_data: dict) -> bool:
         """
