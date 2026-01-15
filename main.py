@@ -1,13 +1,25 @@
 import sys
+
+from jinja2.nodes import FromImport
+from uaclient.status import status
+
 from student_management_system.storage.storage_manager import StorageManager
 from student_management_system.ui import prompts, menus
 from student_management_system.models.user import Admin, Teacher, Student
 from student_management_system.models.attendance import Attendance
 from student_management_system.models.grade import Grade
 from student_management_system import utils
+from colorama import Fore, Style
+
+
 
 # Configuration
 DATA_DIR = "student_management_system/data"
+RED = Fore.RED
+GREEN = Fore.GREEN
+YELLOW = Fore.YELLOW
+BLUE = Fore.BLUE
+RESET = Style.RESET_ALL
 
 def create_user_from_dict(data: dict):
     """Helper to instantiate appropriate User subclass from dict data."""
@@ -88,7 +100,7 @@ def main():
                 # 3. Role Routing
                 role = current_user._role
                 action = None
-                
+
                 if role == 'Admin':
                     action = menus.admin_menu()
                     # 4. Action Dispatching (Admin)
@@ -109,11 +121,32 @@ def main():
                                 prompts.display_message(f"User {new_user_data['_username']} created successfully.")
                             else:
                                 prompts.display_error("Failed to save user.")
+                    elif action == '2' :        #Update user's data
+                        pass
 
-                    elif action == '2': # Course Management
+                    elif action == '3' :        #Delete User
+                        pass
+
+
+                    elif action == '4' :        #Create Group
+                        pass
+
+                    elif action == '5' :        #Update Group
+                        pass
+
+                    elif action == '6' :        # Delete Group
+                        pass
+
+                    elif action == '7' :        # Show Users
+                        pass
+
+                    elif action == "8" :        #Show Groups
+                        pass
+
+                    elif action == '9': # Course Management
                         prompts.display_message("Course Management Module (Placeholder)")
-                    
-                    elif action == '3': # System Reports
+
+                    elif action == '10': # System Reports
                         # Generate both reports
                         att_records = storage.load_attendance()
                         grades_records = storage.load_grades()
@@ -126,11 +159,11 @@ def main():
                         else:
                             prompts.display_error("Failed to generate some reports.")
 
-                    elif action == '4': # Logout
+                    elif action == '11': # Logout
                         current_user = None
                         prompts.display_message("Logged out.")
-                    
-                    elif action == '5': # Exit
+
+                    elif action == '12': # Exit
                         if prompts.prompt_confirmation("Are you sure you want to exit?"):
                             print("Backing up data...")
                             storage.backup_data()
@@ -211,11 +244,11 @@ def main():
                         user_att = [r for r in all_att if r['student_id'] == my_id]
                         
                         if user_att:
-                            print(f"\n--- Attendance Record for {current_user._username} ---")
-                            print(f"{'Date':<12} | {'Course':<10} | {'Status':<6}")
+                            print(f"\n{BLUE}--- Attendance Record for {current_user._username} ---")
+                            print(f"{BLUE}{'Date':<12} | {'Course':<10} | {'Status':<6}")
                             print("-" * 35)
                             for r in user_att:
-                                print(f"{r['date']:<12} | {r['course_id']:<10} | {r['status']:<6}")
+                                print(f"{RED if r['status'] == 'A' else (GREEN if r['status'] == 'P' else YELLOW)}{r['date'] :<12} | {r['course_id'] :<10} | {r['status'] :<6}{RESET}")
                         else:
                             prompts.display_message("No attendance records found.")
 
@@ -229,18 +262,18 @@ def main():
                         user_grades = [g for g in all_grades if g['student_id'] == my_id]
 
                         if user_grades:
-                            print(f"\n--- Progress Record for {current_user._username} ---")
-                            print(f"{'Course':<10} | {'Score':<8} | {'Max':<8} | {'%':<6}")
+                            print(f"\n{BLUE}--- Progress Record for {current_user._username} ---")
+                            print(f"{BLUE}{'Course':<10} | {'Score':<8} | {'Max':<8} | {'%':<6}")
                             print("-" * 40)
                             for g in user_grades:
                                 score = float(g['score'])
                                 max_s = float(g['max_score'])
                                 perc = (score / max_s * 100) if max_s > 0 else 0
-                                print(f"{g['course_id']:<10} | {score:<8} | {max_s:<8} | {perc:.1f}%")
-                            
+                                print(f"{GREEN if perc >= 85.0 else (YELLOW if 70.0 < perc < 84.0 else RED)}{g['course_id']:<10} | {score:<8} | {max_s:<8} | {perc:.1f}%"f"{RESET}")
+
                             # Calculate GPA
                             gpa = utils.calculate_gpa(user_grades)
-                            print(f"\nEstimated GPA: {gpa}")
+                            print(f'{GREEN if gpa > 3.0 else(YELLOW if 2.0<gpa<3.0 else RED)}'f"\nEstimated GPA: {gpa}"f"{RESET}")
                         else:
                             prompts.display_message("No grades found.")
 
