@@ -60,5 +60,19 @@
             "PHY-101",
             "MATH-101"
         ]
+    },
+    {
+        "_username": "bobur",
+        "_password": "1234",
+        "_role": "Admin",
+        "_is_active": true,
+        "_user_id": "A-006"
+    },
+    {
+        "_username": "shavkat",
+        "_password": "shava123",
+        "_role": "Teacher",
+        "_is_active": true,
+        "_user_id": "T-007"
     }
 ]
