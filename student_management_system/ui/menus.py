@@ -8,10 +8,17 @@ def admin_menu() -> str:
     """
     options = {
         "1": "Add User",
-        "2": "Course Management", # Placeholder for now as mainly User/Attendance/Grade focus
-        "3": "System Reports",
-        "4": "Logout",
-        "5": "Exit"
+        "2": "Update User",
+        "3": "Delete User",
+        "4": "Create Group",
+        "5": "Update Group",
+        "6": "Delete Group",
+        "7": "Show Users",
+        "8": "Show Groups",
+        "9": "Course Management",
+        "10": "System Reports",
+        "11": "Logout",
+        "12": "Exit"
     }
     print("\n[ADMIN DASHBOARD]")
     return prompts.prompt_menu(options)
