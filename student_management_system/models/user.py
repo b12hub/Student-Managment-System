@@ -44,7 +44,7 @@ class User(ABC):
         Returns:
             dict: A dictionary containing profile details.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement view_profile")
 
     def change_password(self, new_password_hash: str) -> bool:
         """

@@ -148,7 +148,12 @@ class StorageManager:
                 with open(a_path, 'r') as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        pass
+                        if not all(key in row for key in ['student_id', 'course_id', 'date', 'status']):
+                            att_valid = False
+                            break
+                        if row['status'] not in ['P', 'A', 'L', 'E']:
+                            att_valid = False
+                            break
             except (csv.Error, ValueError):
                 att_valid = False
                 
@@ -160,7 +165,15 @@ class StorageManager:
                 with open(g_path, 'r') as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        pass
+                        if not all(key in row for key in ['student_id', 'course_id', 'score', 'max_score']):
+                            grades_valid = False
+                            break
+                        try:
+                            float(row['score'])
+                            float(row['max_score'])
+                        except ValueError:
+                            grades_valid = False
+                            break
             except (csv.Error, ValueError):
                 grades_valid = False
 
