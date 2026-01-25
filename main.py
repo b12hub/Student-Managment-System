@@ -121,12 +121,42 @@ def main():
                                 prompts.display_message(f"User {new_user_data['_username']} created successfully.")
                             else:
                                 prompts.display_error("Failed to save user.")
+
                     elif action == '2' :        #Update user's data
                         pass
 
-                    elif action == '3' :        #Delete User
-                        pass
+                    elif action == 3:  # Delete User
+                        users = storage.load_users()
+                        if users:
+                            print("\n--- Users List ---")
 
+                            for u in users:
+                                print(f"ID: {u.get('_user_id')} | Name: {u.get('_username')}")
+
+                            else : prompts.display_message("No Users found.")
+
+                            username = input("Input username to delete: ")
+                            # Find the specific user dictionary to delete
+                            user_to_delete = next((u for u in users if u['_username'] == username), None)
+
+                            if user_to_delete:
+                                users.remove(user_to_delete)
+                                storage.save_users(users)  # Ensure you save the updated list
+                                prompts.display_message(f"User {username} deleted successfully.")
+
+                            else: prompts.display_error("Failed to delete user.")
+
+                    # elif action == '3' :        #Delete User
+                    #     users = storage.load_users()
+                    #     if users:
+                    #         print("\n--- Users List ---")
+                    #         for u in users:
+                    #             print(f"ID: {u.get('_user_id')} | Name: {u.get('_username')}")
+                    #
+                    #
+                    #     username = input('Input username to delete : ')
+                    #     if any(u['_username'] == username for u in users):
+                    #         users.remove([u['_username'] for u in users])
 
                     elif action == '4' :        #Create Group
                         pass
@@ -136,6 +166,7 @@ def main():
 
                     elif action == '6' :        # Delete Group
                         pass
+
 
                     elif action == '7' :        # Show Users
                         pass
@@ -214,8 +245,8 @@ def main():
                         students = storage.load_students()
                         if students:
                             print("\n--- Student List ---")
-                            for s in students:
-                                print(f"ID: {s.get('_user_id')} | Name: {s.get('_username')}")
+                            for u in students:
+                                print(f"ID: {u.get('_user_id')} | Name: {u.get('_username')}")
                         else:
                             prompts.display_message("No students found.")
 
