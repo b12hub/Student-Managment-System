@@ -1,9 +1,0 @@
-student_id,course_id,date,status,marked_by
-S-001,BIO-101,2023-10-01,P,mr_smith
-S-001,BIO-101,2023-10-02,P,mr_smith
-S-001,BIO-101,2023-10-03,A,mr_smith
-S-001,MATH-101,2023-10-01,P,mrs_doe
-S-001,MATH-101,2023-10-03,P,mrs_doe
-S-002,PHY-101,2023-10-01,P,mr_smith
-S-002,PHY-101,2023-10-02,P,mr_smith
-S-002,MATH-101,2023-10-01,A,mrs_doe
