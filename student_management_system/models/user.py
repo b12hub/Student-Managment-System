@@ -72,6 +72,8 @@ class Admin(User):
         super().__init__(username, password_hash, "Admin", is_active)
         self._admin_id = "A-000"  # Placeholder ID
         self._permissions = []    # List of permissions
+        self._groups = []         # Internal list of groups
+        self._users = []          # Internal list of users
 
     def add_user(self, user_data: dict) -> bool:
         """
@@ -83,10 +85,14 @@ class Admin(User):
         Returns:
             bool: True if successful.
         """
-        # Logic to add user would go here
+        # Check if user already exists based on username or user_id
+        for user in self._users:
+            if user.get("username") == user_data.get("username"):
+                return False
+        self._users.append(user_data)
         return True
 
-    def add_group(self , group_data: dict) -> bool:
+    def add_group(self, group_data: dict) -> bool:
         """
         Add a new group to the system.
 
@@ -96,6 +102,14 @@ class Admin(User):
         Returns:
             bool: True if successful.
         """
+        # Prevent duplicate groups by group_id if present
+        group_id = group_data.get("group_id")
+        if group_id:
+            for group in self._groups:
+                if group.get("group_id") == group_id:
+                    return False
+        self._groups.append(group_data)
+        return True
 
     def remove_user(self, user_id: str) -> bool:
         """
@@ -107,9 +121,13 @@ class Admin(User):
         Returns:
             bool: True if successful.
         """
-        return True
+        for i, user in enumerate(self._users):
+            if user.get("user_id") == user_id:
+                self._users.pop(i)
+                return True
+        return False
 
-    def remove_group(self , group_id: str) -> bool:
+    def remove_group(self, group_id: str) -> bool:
         """
         Remove a group from the system.
 
@@ -119,6 +137,11 @@ class Admin(User):
         Returns:
              bool: True if successful.
         """
+        for i, group in enumerate(self._groups):
+            if group.get("group_id") == group_id:
+                self._groups.pop(i)
+                return True
+        return False
 
     def update_user(self, user_data: dict) -> bool:
         """
@@ -129,12 +152,22 @@ class Admin(User):
 
         Returns:
             bool: True if successful.
-
-
         """
+        # Update allowed fields (username, is_active) from dict input
+        user_id = user_data.get("user_id")
+        if not user_id:
+            return False
 
+        for user in self._users:
+            if user.get("user_id") == user_id:
+                if "username" in user_data:
+                    user["username"] = user_data["username"]
+                if "is_active" in user_data:
+                    user["is_active"] = user_data["is_active"]
+                return True
+        return False
 
-    def update_group(self , group_data: dict) -> bool:
+    def update_group(self, group_data: dict) -> bool:
         """
         Update group information.
 
@@ -142,10 +175,17 @@ class Admin(User):
             group_data (dict): Dictionary containing group information.
 
         Returns:
-            bool : True if successful.
-        :param group_data:
-        :return:
+            bool: True if successful.
         """
+        group_id = group_data.get("group_id")
+        if not group_id:
+            return False
+
+        for group in self._groups:
+            if group.get("group_id") == group_id:
+                group.update(group_data) # Update all provided fields
+                return True
+        return False
 
     def manage_course(self, course_data: dict) -> bool:
         """
@@ -157,6 +197,7 @@ class Admin(User):
         Returns:
             bool: True if successful.
         """
+        # Placeholder for course management logic (not fully specified in requirements, but returns Boolean)
         return True
 
     def generate_system_report(self) -> dict:
@@ -166,7 +207,11 @@ class Admin(User):
         Returns:
             dict: The system report data.
         """
-        return {"report_type": "System Report", "data": "Placeholder Data"}
+        return {
+            "report_type": "System Report",
+            "total_users": len(self._users),
+            "total_groups": len(self._groups)
+        }
 
     def view_profile(self) -> dict:
         """Override to view Admin profile."""
@@ -189,7 +234,7 @@ class Teacher(User):
         self._department = "General"
         self._assigned_courses = []
 
-    def mark_attendance(self, student_list: list, date: str) -> bool:
+    def mark_attendance(self, student_list: list, date: str) -> dict:
         """
         Mark attendance for a list of students.
         
@@ -198,11 +243,17 @@ class Teacher(User):
             date (str): The date of attendance.
             
         Returns:
-            bool: True if successful.
+            dict: A structured attendance record.
         """
-        return True
+        # Return a structured attendance record as requested
+        return {
+            "date": date,
+            "present_students": student_list,
+            "teacher_id": self._teacher_id,
+            "status": "recorded"
+        }
 
-    def assign_grade(self, student_id: str, course_id: str, grade: float) -> bool:
+    def assign_grade(self, student_id: str, course_id: str, grade: float) -> dict:
         """
         Assign a grade to a student.
         
@@ -212,9 +263,15 @@ class Teacher(User):
             grade (float): The grade to assign.
             
         Returns:
-            bool: True if successful.
+            dict: A structured grade record.
         """
-        return True
+        # Return a structured grade record as requested
+        return {
+            "student_id": student_id,
+            "course_id": course_id,
+            "grade": grade,
+            "assigned_by": self._teacher_id
+        }
 
     def view_student_progress(self, student_id: str) -> dict:
         """
@@ -261,6 +318,7 @@ class Student(User):
         self._student_id = "S-000"  # Placeholder ID
         self._enrolled_courses = []
         self._academic_year = 1
+        self._grades = {} # Dictionary to store grades: {course_id: grade}
 
     def view_attendance(self, course_id: str) -> dict:
         """
@@ -281,7 +339,7 @@ class Student(User):
         Returns:
             dict: A dictionary of grades.
         """
-        return {"grades": {}}
+        return {"student_id": self._student_id, "grades": self._grades}
 
     def calculate_gpa(self) -> float:
         """
@@ -290,7 +348,12 @@ class Student(User):
         Returns:
             float: The calculated GPA.
         """
-        return 0.0
+        # Implement simple GPA formula using available grades
+        if not self._grades:
+            return 0.0
+        
+        total_points = sum(self._grades.values())
+        return total_points / len(self._grades)
 
     def enroll_course(self, course_id: str) -> bool:
         """
@@ -302,7 +365,11 @@ class Student(User):
         Returns:
             bool: True if successful.
         """
-        return True
+        # Append course only if not already enrolled
+        if course_id not in self._enrolled_courses:
+            self._enrolled_courses.append(course_id)
+            return True
+        return False
 
     def view_profile(self) -> dict:
         """Override to view Student profile."""
